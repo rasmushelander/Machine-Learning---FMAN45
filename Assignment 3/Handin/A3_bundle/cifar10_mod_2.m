@@ -1,4 +1,4 @@
-function cifar10_starter()
+function [pred, y_test] = cifar10_mod_2()
     addpath(genpath('./'));
 
     % argument=2 is how many 10000 images that are loaded. 20000 in this
@@ -44,17 +44,26 @@ function cifar10_starter()
         'padding', [2 2]);
     
     net.layers{end+1} = struct('type', 'relu');
+    
+    net.layers{end+1} = struct('type', 'maxpooling');
+    
+    net.layers{end+1} = struct('type', 'convolution',...
+        'params', struct('weights', 0.1*randn(5,5,16,26)/sqrt(5*5*16/2), 'biases', zeros(26,1)),...
+        'padding', [2 2]);
+    
+    net.layers{end+1} = struct('type', 'relu');
         
     net.layers{end+1} = struct('type', 'maxpooling');
     
     net.layers{end+1} = struct('type', 'convolution',...
-        'params', struct('weights', 0.1*randn(5,5,16,16)/sqrt(5*5*16/2), 'biases', zeros(16,1)),...
-        'padding', [2 2]);
+        'params', struct('weights', 0.1*randn(3,3,26,32)/sqrt(3*3*26/2), 'biases', zeros(32,1)),...
+        'padding', [1 1]);
     
     net.layers{end+1} = struct('type', 'relu');
     
     net.layers{end+1} = struct('type', 'fully_connected',...
-        'params', struct('weights', randn(10,4096)/sqrt(4096/2), 'biases', zeros(10,1)));
+        'params', struct('weights', randn(10,2048)/sqrt(2048/2), 'biases', zeros(10,1)));
+    
     
     net.layers{end+1} = struct('type', 'softmaxloss');
 
@@ -65,14 +74,23 @@ function cifar10_starter()
         'iterations', 5000,...
         'batch_size', 16,...
         'momentum', 0.95,...
-        'weight_decay', 0.001);
+        'weight_decay', 0.004);
     
     net = training(net, x_train, y_train, x_val, y_val, training_opts);
+    
+%     training_opts = struct('learning_rate', 1e-4,...
+%         'iterations',3000,...
+%         'batch_size', 16,...
+%         'momentum', 0.95,...
+%         'weight_decay', 0.001);
+%     
+%     net = training(net, x_train, y_train, x_val, y_val, training_opts);
+  
 
     % since the training takes a lot of time, consider refining rather than
     % retraining the net. Add layers to a net where the parameters already
     % are good at the other layers.
-    save('models/cifar10_baseline.mat', 'net');
+    save('models/cifar10_mod_last.mat', 'net');
     
     % evaluate on the test set
     pred = zeros(numel(y_test),1);

@@ -21,9 +21,9 @@ function L = softmaxloss_forward(x, labels)
     % for numerical reasons. Convince yourself that the result is the same.
     x = bsxfun(@minus, x, min(x, [], 1));
     
-    %turn labels into dummy variables
-    labels = full(ind2vec(labels', features)); 
+    labels = double(labels); 
+    labels = full(ind2vec(labels', features));     %turn labels into dummy variables
     L = -log(softmax(x)); %calculate softmax 
     L = labels.*L; % use only the elements in L corresponding to the right class
-    L = 1/batch*(sum(L, 'all')); 
+    L = 1/batch*(sum(L, 'all')); % calculate mean loss of the batch
 end

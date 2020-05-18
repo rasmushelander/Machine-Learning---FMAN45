@@ -74,13 +74,14 @@ function net = training(net, x, labels, x_val, labels_val, opts)
                             momentum{i}.(s) = zeros(size(net.layers{i}.params.(s)));
                         end
                             % Training options
-                            training_opts = struct('learning_rate', 1e-1, ...
-                                 'iterations', 3000,...
-                                 'batch_size', 16,...
-                                 'momentum', 0.9,...
-                                 'weight_decay', 0.005);
-                        momentum{i}.(s) = opts.mome
-                        error('Implement this!');
+                   
+                        momentum{i}.(s) = opts.momentum * momentum{i}.(s) + ...
+                            (1-opts.momentum)*grads{i}.(s);
+                        
+                        net.layers{i}.params.(s) = net.layers{i}.params.(s) - ...
+                            opts.learning_rate * (momentum{i}.(s) + ... 
+                             opts.weight_decay * net.layers{i}.params.(s));
+                        %error('Implement this!');
                     else
                         % run normal gradient descent if 
                         % the momentum parameter not is specified
@@ -121,15 +122,17 @@ function net = training(net, x, labels, x_val, labels_val, opts)
     end
 
     figure(1);
-    plot(1:opts.iterations, loss_ma+loss_weight_decay);
-    xlabel('Iteration');
-    ylabel('Loss');
+    set(gcf, 'Position', [10 10 900 600]);
+    plot(1:opts.iterations, loss_ma+loss_weight_decay,'linewidth', 2);
+    xlabel('Iteration', 'fontsize', 12);
+    ylabel('Loss', 'fontsize', 12);
 
     figure(2);
-    plot(1:opts.iterations, accuracy_ma);
+    set(gcf, 'Position', [10 10 900 600]);
+    plot(1:opts.iterations, accuracy_ma,'linewidth', 2);
     hold on;
-    plot(val_it, val_acc);
-    legend('Training accuracy', 'Validation accuracy');
-    xlabel('Iteration');
-    ylabel('Accuracy');
+    plot(val_it, val_acc,'linewidth', 2);
+    legend('Training accuracy', 'Validation accuracy',  'fontsize', 12);
+    xlabel('Iteration', 'fontsize', 12);
+    ylabel('Accuracy', 'fontsize', 12);
 end

@@ -1,7 +1,7 @@
 %% Task E5 
-K = 2:30; 
-mc_rate = zeros(1,29); 
-for i = 1:29
+K = 100:101; 
+mc_rate = zeros(1,2); 
+for i = 1:2
    [y, C] = K_means_clustering(train_data_01, K(i)); 
    c = K_means_classifier(train_data_01, C);
     cluster_labels = assign_cluster_labels(c, train_labels_01); 

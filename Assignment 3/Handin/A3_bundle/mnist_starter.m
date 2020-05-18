@@ -1,4 +1,4 @@
-function mnist_starter()
+function [pred, y_test] = mnist_starter()
     addpath(genpath('./'));
 
     % load the dataset
