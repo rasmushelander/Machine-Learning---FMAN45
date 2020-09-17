@@ -1,3 +1,3 @@
 # Machine-Learning---FMAN45
 
-Repository for the computer exercises in course given at LTH
+Repository for the assignments in course given at LTH
